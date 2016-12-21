@@ -15,14 +15,14 @@ function post(req, res) {
         createComment.bind(null, bag),
         updateComment.bind(null, bag)
     ], function(err) {
-        if (err) {
+        if (err)
             res.status(500).send({
                 'error': err
             });
-        }
-        res.send({
-            "comment": bag.comment
-        });
+        else
+            res.send({
+                "comment": bag.comment
+            });
 
     });
 }
@@ -42,8 +42,6 @@ function checkInputParams(bag, next) {
 
     if (!bag.body.diffs)
         return next('diffs is a required parameter!');
-
-
 
     return next();
 }
@@ -105,7 +103,14 @@ function updateComment(bag, next) {
 
     Comments.findOneAndUpdate({
             commentId: bag.comment.commentId
-        }, {$set: {isCreated: bag.body.isCreated || false, commentText: commentText}}, {new: true},
+        }, {
+            $set: {
+                isCreated: bag.body.isCreated || false,
+                commentText: commentText
+            }
+        }, {
+            new: true
+        },
         function(err, comment) {
             if (err) return next(err);
 
