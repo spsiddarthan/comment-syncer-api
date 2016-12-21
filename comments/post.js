@@ -34,9 +34,6 @@ function checkInputParams(bag, next) {
     if (!bag.body.questionId)
         return next('questionId is a required parameter!');
 
-    if (!bag.body.commentText)
-        return next('commentText is a required parameter!');
-
     if (!bag.body.userId)
         return next('userId is a required parameter!');
 
@@ -69,9 +66,11 @@ function createComment(bag, next) {
     var comment = {
         commentId: bag.body.commentId,
         questionId: bag.body.questionId,
-        userId: bag.body.userId,
-        commentText: bag.body.commentText
+        userId: bag.body.userId
     };
+
+    var patch = dmp.patch_make('', bag.body.diffs);
+    comment.commentText = dmp.patch_apply(patch, '')[0];
 
     if (bag.body.isCreated)
         comment.isCreated = bag.body.isCreated;
