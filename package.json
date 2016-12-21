@@ -1,0 +1,23 @@
+{
+  "name": "comment-syncer-api",
+  "version": "1.0.0",
+  "description": "Backend for comment syncer",
+  "main": "index.js",
+  "dependencies": {
+    "diff_match_patch": "^0.1.1",
+    "mongoose": "^4.7.4"
+  },
+  "devDependencies": {
+    "async": "^2.1.4",
+    "body-parser": "^1.15.2",
+    "diff_match_patch": "^0.1.1",
+    "express": "^4.14.0",
+    "mongoose": "^4.7.4",
+    "mongoose-findorcreate": "^0.1.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
