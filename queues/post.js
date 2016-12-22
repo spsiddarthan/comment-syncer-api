@@ -13,24 +13,27 @@ function post(req, res) {
     ], function(err) {
         if (err) {
             res.status(500).send({
-                'error': "Could not establish connection with microservice!"
+                'message': "Could not establish connection with microservice!",
+                'error': err
+            });
+        } else {
+            res.send({
+                "message": "message sent successfully!"
             });
         }
-        res.send({
-            "message": "message sent successfully!"
-        });
-
     });
 }
 
 function establishQueueConnection(bag, next) {
     amqp.connect('amqp://localhost', function(err, conn) {
+        if (err)
+            return next(err);
         conn.createChannel(function(err, ch) {
             var q = 'commentSync';
 
             bag.ch = ch;
             ch.assertQueue(q, {
-                durable: false
+                durable: true
             });
             return next();
 
@@ -39,6 +42,6 @@ function establishQueueConnection(bag, next) {
 }
 
 function sendMessageToQueue(bag, next) {
-    bag.ch.sendToQueue('commentSync', new Buffer(JSON.stringify(bag.body)));
+    bag.ch.sendToQueue('commentSync', new Buffer(JSON.stringify(bag.body)), {persistent: true});
     return next();
 }
