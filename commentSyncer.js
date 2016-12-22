@@ -7,11 +7,16 @@ amqp.connect('amqp://localhost', function(err, conn) {
         var q = 'commentSync';
 
         ch.assertQueue(q, {
-            durable: false
+            durable: true
         });
         console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
+
+        var prefetchCount = 1;
+        //process messages one at a time
+        ch.prefetch(prefetchCount);
         ch.consume(q, function(msg) {
             var comment = JSON.parse(msg.content);
+            console.log(comment);
             async.series([
                 syncComment.bind(null, comment)
             ], function(err) {
@@ -19,11 +24,13 @@ amqp.connect('amqp://localhost', function(err, conn) {
                     console.log('Could not sync comment due to error', err);
                 else
                     console.log('Successfully synced comment');
+                ch.ack(msg);
             });
         }, {
-            noAck: true
+            noAck: false
         });
-    });
+
+        });
 });
 
 function syncComment(comment, next) {
