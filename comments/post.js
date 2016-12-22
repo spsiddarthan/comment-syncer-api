@@ -2,7 +2,7 @@ var self = post;
 var async = require('async');
 var dmpmod = require('diff_match_patch');
 var dmp = new dmpmod.diff_match_patch();
-var Comments = require('./Schema.js');
+var Comment = require('./comment.js');
 
 module.exports = self;
 
@@ -44,7 +44,7 @@ function checkInputParams(bag, next) {
 }
 
 function findExistingComment(bag, next) {
-    Comments.findOne({
+    Comment.findOne({
             "commentId": bag.body.commentId
         },
         function(err, comment) {
@@ -81,7 +81,7 @@ function createComment(bag, next) {
     if (bag.body.downvotes)
         comment.downvotes = bag.body.downvotes;
 
-    Comments.create(comment,
+    Comment.create(comment,
         function(err, comment) {
             if (err) return next(err);
 
@@ -100,7 +100,7 @@ function updateComment(bag, next) {
     var patch = dmp.patch_make(bag.comment.commentText, bag.body.diffs);
     var commentText = dmp.patch_apply(patch, bag.comment.commentText)[0];
 
-    Comments.findOneAndUpdate({
+    Comment.findOneAndUpdate({
             commentId: bag.comment.commentId
         }, {
             $set: {
